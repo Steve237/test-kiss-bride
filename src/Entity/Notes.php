@@ -2,13 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\ExpenseReportRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\NotesRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
- * @ORM\Entity(repositoryClass=ExpenseReportRepository::class)
+ * @ORM\Entity(repositoryClass=NotesRepository::class)
+ * @ApiResource
  */
-class ExpenseReport
+class Notes
 {
     /**
      * @ORM\Id
@@ -33,15 +35,9 @@ class ExpenseReport
     private $type;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $registrationDate;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=society::class, inversedBy="expenseReports")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $society;
 
     public function getId(): ?int
     {
@@ -92,18 +88,6 @@ class ExpenseReport
     public function setRegistrationDate(\DateTimeInterface $registrationDate): self
     {
         $this->registrationDate = $registrationDate;
-
-        return $this;
-    }
-
-    public function getSociety(): ?society
-    {
-        return $this->society;
-    }
-
-    public function setSociety(?society $society): self
-    {
-        $this->society = $society;
 
         return $this;
     }
