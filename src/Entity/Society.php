@@ -8,6 +8,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ORM\Entity(repositoryClass=SocietyRepository::class)
+ * @ApiResource(
+ * itemOperations={"GET"},
+ * collectionOperations={"GET"}
+ * )
  */
 class Society
 {
