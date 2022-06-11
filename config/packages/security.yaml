@@ -1,55 +1,47 @@
 security:
-    enable_authenticator_manager: true
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
-    password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        user:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    encoders:
+        App\Entity\User:
+            algorithm: auto
+            cost: 15
+
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/(_(profiler|wdt)|css|images|img|js)/
             security: false
-        main:
-            lazy: true
-            provider: users_in_memory
-
         login:
-            pattern: ^/api/login
+            pattern:  ^/api/login
             stateless: true
+            anonymous: true
+            provider: user
             json_login:
+                check_path: api_login_check
                 username_path: email
                 password_path: password
-                check_path: /api/login_check
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
-        
         api:
             pattern:   ^/api
+            provider: user
             stateless: true
-            jwt: ~
+            anonymous: true
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
-    access_control:
-         - { path: ^/api/notes, roles: ROLE_USER }
-         - { path: ^/api/societies, roles: ROLE_USER }
-
-when@test:
-    security:
-        password_hashers:
-            # By default, password hashers are resource intensive and take time. This is
-            # important to generate secure password hashes. In tests however, secure hashes
-            # are not important, waste resources and increase test times. The following
-            # reduces the work factor to the lowest possible values.
-            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
-                algorithm: auto
-                cost: 4 # Lowest possible value for bcrypt
-                time_cost: 3 # Lowest possible value for argon
-                memory_cost: 10 # Lowest possible value for argon
+    # access_control:
+    #     - { path: ^/admin_74ze5f/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    #     - { path: ^/admin_74ze5f/, role: ROLE_SUPER_ADMIN }
+    #     - { path: ^/user/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    #     - { path: ^/user/, roles: [ROLE_USER, ROLE_SUPER_ADMIN] }
+    #     - { path: ^/, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    #     - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    #     - { path: ^/api/fb9870/documentation, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    #     - { path: ^/api/v1/users/create, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    #     - { path: ^/api/v1/users/[0-9]+/enabled, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    #     - { path: ^/api/v1/, roles: IS_AUTHENTICATED_FULLY }
