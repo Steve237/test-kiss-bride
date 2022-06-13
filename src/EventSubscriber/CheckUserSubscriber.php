@@ -18,7 +18,7 @@ class CheckUserSubscriber implements EventSubscriberInterface
     {
         // Get current path
         $route = $event->getRequest()->getpathInfo();
-        
+
         // Get current user
         $user = $this->security->getUser();
 
